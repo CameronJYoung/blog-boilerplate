@@ -11,6 +11,8 @@
   "devDependencies": {
     "bootstrap": "^4.5.0",
     "gulp": "^4.0.2",
-    "gulp-twig": "^1.2.0"
+    "gulp-sass": "^4.1.0",
+    "gulp-twig": "^1.2.0",
+    "node-sass": "^4.14.1"
   }
 }
