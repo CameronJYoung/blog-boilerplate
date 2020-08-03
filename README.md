@@ -2,12 +2,13 @@
 
 This boilerplate code is to assist me in creating any static blog like websites/webapps. It will be built in a way where if you want to modify it to spit the files in a different format or use more plugins you can. 
 
-The task runner and general base of the static site generator is gulp. This will allow me to add templating and any css/javascript build steps automatically.
+The task runner and general base of the static site generator is gulp. This will allow me to add templating and any css/javascript build steps automatically. There will be quite a bit of boilerplate in this mainly to show my future self (or any other person reading this) how various things work. Most of the content/pages can be deleted but I would keep one for refernece. Or you can look on github all the time up to you :D 
 
 In this project I aim to be using
 
  - Twig - for the templating
  - Babel - for the javascript
+ - PostCSS - This will help in making filesizes smaller for css files
  - SCSS - as the css pre-processor
  - Bootstrap - easier and more consistant styling
  - Browsersync - To reload the page during development
@@ -32,7 +33,7 @@ To then actually use this data you go in a page (or layout file!) use use this s
 {{ data }}
 ```
 
-### SCSS
+### SCSS, Bootstrap & postCSS
 
 
 
