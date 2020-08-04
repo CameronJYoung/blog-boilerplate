@@ -4,6 +4,7 @@ const postcss = require('gulp-postcss');
 const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
 const scss = require('gulp-sass');
+const babel = require('gulp-babel');
 
 scss.compiler = require('node-sass');
 
@@ -33,7 +34,16 @@ let cssTask = () => {
 
 }
 
+let jsConvert = () => {
+	return gulp.src('./app/scripts/**/*.js')
+		.pipe(babel({
+			presets: ['@babel/env']
+		}))
+		.pipe(gulp.dest('./dist/scripts'))
+}
+
+
 exports.templates = templatesTask
 exports.css = cssTask
 exports.scss = scssTask
-exports.build = gulp.series(templatesTask,scssTask,cssTask)
+exports.build = gulp.series(templatesTask,scssTask,cssTask,jsConvert)
