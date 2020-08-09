@@ -56,12 +56,12 @@ let jsConvert = (done) => {
 	var pagesFilePrefix = './app/scripts/pages/';
 
 
-	fs.readdir('./app/scripts/pages/', (err, files) => {
+	fs.readdir('pagesFilePrefix', (err, files) => {
 		files.forEach(file => {
 			fileArray.push(pagesFilePrefix + file);
 			
 		})
-		var tasks = fileArray.map(function(entry) {
+		var tasks = fileArray.map((entry) => {
 			return browserify({
 				entries: [entry],
 				transform: [babelify.configure({presets:['@babel/preset-env']})]
@@ -77,8 +77,6 @@ let jsConvert = (done) => {
 		});
 		es.merge.apply(null, tasks);
 	});
-
-    // map them to our stream function
     
 	done();
 };
@@ -91,9 +89,5 @@ let cleanDIST = () => {
 	return del('./dist')
 }
 
-
-exports.templates = templatesTask
-exports.css = cssTask
-exports.scss = scssTask
 exports.clean = cleanTMP
 exports.build = gulp.series(cleanDIST,templatesTask,scssTask,cssTask,jsConvert,cleanTMP)
