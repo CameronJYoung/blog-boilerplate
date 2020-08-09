@@ -1,20 +1,14 @@
-
-//Libraries
-
 const gulp = require('gulp');
 const del = require("del")
 const fs = require("fs")
 const browserSync = require("browser-sync").create();
-
-//CSS
+//var reload = browserSync.reload
 const postcss = require('gulp-postcss');
 const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
 const scss = require('gulp-sass');
 scss.compiler = require('node-sass');
-//Templates
 const twig = require('gulp-twig');
-//Javascript
 const browserify = require("browserify");
 const babelify = require("babelify");
 const source = require("vinyl-source-stream");
@@ -103,13 +97,6 @@ let cleanTMP = () => {
 let cleanDIST = () => {
 	return del('./dist')
 }
-
-/* 
-Uncomment/comment below if reload variable is needed (pretty sure only if you're moving html directly
-I use stream instead)
-*/ 
-//var reload = browserSync.reload
-
 
 let serveTask = () => {
 	browserSync.init({
