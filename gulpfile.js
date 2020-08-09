@@ -86,6 +86,16 @@ let jsConvert = (done) => {
 	done();
 };
 
+let moveFontsTask = () => {
+	return gulp.src('./app/fonts/**/*.*')
+		.pipe(gulp.dest('./dist/fonts'))
+}
+
+let moveImgsTask = () => {
+	return gulp.src('./app/imgs/**/*.*')
+		.pipe(gulp.dest('./dist/imgs'))
+}
+
 let cleanTMP = () => {
 	return del('./.tmp')
 }
@@ -94,7 +104,11 @@ let cleanDIST = () => {
 	return del('./dist')
 }
 
-var reload = browserSync.reload
+/* 
+Uncomment/comment below if reload variable is needed (pretty sure only if you're moving html directly
+I use stream instead)
+*/ 
+//var reload = browserSync.reload
 
 
 let serveTask = () => {
@@ -107,6 +121,8 @@ let serveTask = () => {
 	gulp.watch('./app/styles/**/*', gulp.series(scssTask,cssTask,cleanTMP));
 	gulp.watch('./app/scripts/**/*', jsConvert);
 	gulp.watch('./app/templates/**/*').on('change', templatesTask);
+	gulp.watch('./app/fonts/**/*').on('change', moveFontsTask);
+	gulp.watch('./app/imgs/**/*').on('change', moveImgsTask);
 }
 
 
@@ -124,5 +140,5 @@ let serveTask = () => {
 
 
 exports.clean = cleanTMP
-exports.build = gulp.series(cleanDIST,templatesTask,scssTask,cssTask,jsConvert,cleanTMP)
-exports.dev = gulp.series(cleanDIST,templatesTask,scssTask,cssTask,jsConvert,cleanTMP,serveTask)
+exports.build = gulp.series(cleanDIST,templatesTask,scssTask,cssTask,jsConvert,moveFontsTask,moveImgsTask,cleanTMP)
+exports.dev = gulp.series(cleanDIST,templatesTask,scssTask,cssTask,jsConvert,cleanTMP,moveFontsTask,moveImgsTask,serveTask)
