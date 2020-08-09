@@ -1,8 +1,10 @@
+
 //Libraries
 
 const gulp = require('gulp');
 const del = require("del")
 const fs = require("fs")
+const browserSync = require("browser-sync").create();
 
 //CSS
 const postcss = require('gulp-postcss');
@@ -26,7 +28,8 @@ const es = require("event-stream")
 let templatesTask = () => {
 	return gulp.src('./app/templates/pages/*.html')
 		.pipe(twig())
-		.pipe(gulp.dest('./dist'));
+		.pipe(gulp.dest('./dist'))
+		.pipe(browserSync.stream());
 
 }
 
@@ -45,6 +48,7 @@ let cssTask = () => {
 	return gulp.src('./.tmp/styles/**/*.css')
 		.pipe(postcss(processors))
 		.pipe(gulp.dest('./dist/styles'))
+		.pipe(browserSync.stream())
 
 }
 
@@ -56,7 +60,7 @@ let jsConvert = (done) => {
 	var pagesFilePrefix = './app/scripts/pages/';
 
 
-	fs.readdir('pagesFilePrefix', (err, files) => {
+	fs.readdir(pagesFilePrefix, (err, files) => {
 		files.forEach(file => {
 			fileArray.push(pagesFilePrefix + file);
 			
@@ -74,6 +78,7 @@ let jsConvert = (done) => {
 			.pipe(buffer())
 			.pipe(uglify())
 			.pipe(gulp.dest('./dist/scripts'))
+			.pipe(browserSync.stream())
 		});
 		es.merge.apply(null, tasks);
 	});
@@ -89,5 +94,35 @@ let cleanDIST = () => {
 	return del('./dist')
 }
 
+var reload = browserSync.reload
+
+
+let serveTask = () => {
+	browserSync.init({
+        server: {
+			baseDir: "./dist/"
+        }
+    });
+
+	gulp.watch('./app/styles/**/*', gulp.series(scssTask,cssTask,cleanTMP));
+	gulp.watch('./app/scripts/**/*', jsConvert);
+	gulp.watch('./app/templates/**/*').on('change', templatesTask);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 exports.clean = cleanTMP
 exports.build = gulp.series(cleanDIST,templatesTask,scssTask,cssTask,jsConvert,cleanTMP)
+exports.dev = gulp.series(cleanDIST,templatesTask,scssTask,cssTask,jsConvert,cleanTMP,serveTask)
