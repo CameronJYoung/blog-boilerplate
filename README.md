@@ -16,6 +16,8 @@ In this project I aim to be using
 
 I will list below how some of the basic mechanics works. This should be able to be used by most people that understand basic html. When this get's used in an actual website/blog or whatever and if there's any extra things in the readme needed, they should be added write at the bottom under the heading website specific. Does not apply to anyone viewing the public repo.
 
+Something worth noting about the gulpfile, I tested doing the task functions parallel and series and even with a lot of testing series was faster. I am changing it to parallel anyway as I feel that is how it should work. If you want to use the series version, have a look at a commit close to the start reguarding making gulp tasks parallel.
+
 ## Features
 ### Twig
 

@@ -2,7 +2,7 @@ const gulp = require('gulp');
 const del = require("del")
 const fs = require("fs")
 const browserSync = require("browser-sync").create();
-//var reload = browserSync.reload
+var reload = browserSync.reload
 const postcss = require('gulp-postcss');
 const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
@@ -17,9 +17,16 @@ const uglify = require("gulp-uglify");
 const rename = require("gulp-rename")
 const es = require("event-stream")
 
+const paths = {
+	fonts: '',
+	imgs: '',
+	styles: '',
+	templates: ''
+}
 
 
-let templatesTask = () => {
+
+const templatesTask = () => {
 	return gulp.src('./app/templates/pages/*.html')
 		.pipe(twig())
 		.pipe(gulp.dest('./dist'))
@@ -27,14 +34,14 @@ let templatesTask = () => {
 
 }
 
-let scssTask = () => {
+const scssTask = () => {
 	return gulp.src('./app/styles/**/*.scss')
 		.pipe(scss().on('error', scss.logError))
 		.pipe(gulp.dest('./.tmp/styles/'))
 
 }
 
-let cssTask = () => {
+const cssTask = () => {
 	var processors = [
 		autoprefixer({overrideBrowserslist: ['last 2 versions']}),
 		cssnano()
@@ -46,15 +53,13 @@ let cssTask = () => {
 
 }
 
-let jsConvert = (done) => {
+const jsConvert = (done) => {
 	var fileArray = [
 		'./app/scripts/main.js',
 	];
-	
 	var pagesFilePrefix = './app/scripts/pages/';
-
-
 	fs.readdir(pagesFilePrefix, (err, files) => {
+		if (err) done(err);
 		files.forEach(file => {
 			fileArray.push(pagesFilePrefix + file);
 			
@@ -80,25 +85,33 @@ let jsConvert = (done) => {
 	done();
 };
 
-let moveFontsTask = () => {
+const moveFontsTask = () => {
 	return gulp.src('./app/fonts/**/*.*')
-		.pipe(gulp.dest('./dist/fonts'))
+		.pipe(gulp.dest('./dist/fonts'));
 }
 
-let moveImgsTask = () => {
+const delOldFontsTask = () => {
+	return del('./dist/fonts')
+}
+
+const moveImgsTask = () => {
 	return gulp.src('./app/imgs/**/*.*')
 		.pipe(gulp.dest('./dist/imgs'))
 }
 
-let cleanTMP = () => {
+const delOldImgsTask = () => {
+	return del('./dist/imgs')
+}
+
+const cleanTMP = () => {
 	return del('./.tmp')
 }
 
-let cleanDIST = () => {
+const cleanDIST = () => {
 	return del('./dist')
 }
 
-let serveTask = () => {
+const serveTask = () => {
 	browserSync.init({
         server: {
 			baseDir: "./dist/"
@@ -108,24 +121,16 @@ let serveTask = () => {
 	gulp.watch('./app/styles/**/*').on('change', gulp.series(scssTask,cssTask,cleanTMP));
 	gulp.watch('./app/scripts/**/*').on('change',jsConvert);
 	gulp.watch('./app/templates/**/*').on('change', templatesTask);
-	gulp.watch('./app/fonts/**/*').on('change', moveFontsTask);
-	gulp.watch('./app/imgs/**/*').on('change', moveImgsTask);
+	gulp.watch('./app/fonts/**/*').on('change', gulp.series(delOldFontsTask,moveFontsTask,reload));
+	gulp.watch('./app/imgs/**/*').on('change', gulp.series(delOldImgsTask,moveImgsTask,reload));
 }
 
 
 
 
+exports.default = gulp.series(cleanDIST,gulp.parallel(templatesTask,gulp.series(scssTask,cssTask),jsConvert,moveFontsTask,moveImgsTask),cleanTMP,serveTask) //Dupe of dev
 
-
-
-
-
-
-
-
-
-
-
+exports.dev = gulp.series(cleanDIST,gulp.parallel(templatesTask,gulp.series(scssTask,cssTask),jsConvert,moveFontsTask,moveImgsTask),cleanTMP,serveTask)
 exports.clean = cleanTMP
-exports.build = gulp.series(cleanDIST,templatesTask,scssTask,cssTask,jsConvert,moveFontsTask,moveImgsTask,cleanTMP)
-exports.dev = gulp.series(cleanDIST,templatesTask,scssTask,cssTask,jsConvert,cleanTMP,moveFontsTask,moveImgsTask,serveTask)
+
+exports.build = gulp.series(cleanDIST,gulp.parallel(templatesTask,gulp.series(scssTask,cssTask),jsConvert,moveFontsTask,moveImgsTask),cleanTMP)
