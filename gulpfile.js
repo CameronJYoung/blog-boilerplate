@@ -118,8 +118,8 @@ let serveTask = () => {
         }
     });
 
-	gulp.watch('./app/styles/**/*', gulp.series(scssTask,cssTask,cleanTMP));
-	gulp.watch('./app/scripts/**/*', jsConvert);
+	gulp.watch('./app/styles/**/*').on('change', gulp.series(scssTask,cssTask,cleanTMP));
+	gulp.watch('./app/scripts/**/*').on('change',jsConvert);
 	gulp.watch('./app/templates/**/*').on('change', templatesTask);
 	gulp.watch('./app/fonts/**/*').on('change', moveFontsTask);
 	gulp.watch('./app/imgs/**/*').on('change', moveImgsTask);
