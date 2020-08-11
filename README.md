@@ -87,7 +87,7 @@ Whatever name you make the html file is the name the page will look for in the t
 
 ### Other assets
 
-If you want to add images you can add per page images in the imgs>pages folder and any golbal images in the one above. If you want to add fonts just add them put them straight in the fonts folder but you can add a pages folder if you want. These will be moved for the dev and build tasks.
+If you want to add images you can add per page images in the imgs>pages folder and any golbal images in the one above. If you want to add fonts just add them put them straight in the fonts folder but you can add a pages folder if you want. These will be moved in dev and build tasks.
 
 ### Javascript
 
