@@ -1,43 +1,97 @@
 # Camerons Blog Boilerplate
 
-This boilerplate code is to assist me in creating any static blog like websites/webapps. It will be built in a way where if you want to modify it to spit the files in a different format or use more plugins you can. 
+This project is to help anyone create static files for a blog/multiple page website.
 
-The task runner and general base of the static site generator is gulp. This will allow me to add templating and any css/javascript build steps automatically. There will be quite a bit of boilerplate in this mainly to show my future self (or any other person reading this) how various things work. Most of the content/pages can be deleted but I would keep one for refernece. Or you can look on github all the time up to you :D 
+The technologies I use in this are:
+ - Gulp - I use this as a task runner to be able to run tasks with certain libraries/dependencies to achieve templating, css minification, etc.
+ - SCSS - This is in case I ever want to use advanced scss styling features like loops. Also allows me to import bootstrap.
+ - PostCSS - I use this so I can auto prefix and minify my css.
+ - Bootstrap - This is a commonly used css framework that I decided to add to this so that it would be easier to standardize the styling seeing as this would be for a blog.
+ - Twig - I will be using this as the templating engine as it allows me to have template variables,partials and layouts.
+ - Babel & Babelify - This is so I can transpile and bundle my javascript.
+ - Browser Sync - This allows me to have live reload and scss injection in dev mode.
 
-In this project I aim to be using
-
- - Twig - for the templating
- - Babel - for the javascript
- - PostCSS - This will help in making filesizes smaller for css files
- - SCSS - as the css pre-processor
- - Bootstrap - easier and more consistant styling
- - Browsersync - To reload the page during development
+Future Notes:
+ - At some point it might be worth splitting the gulpfile in to multiple files.
+ - Would also like to install a linting tool but a lot of people like to use their own so I may leave that to the person using this.
+ - Have a look at image minification at some point
 
 
-I will list below how some of the basic mechanics works. This should be able to be used by most people that understand basic html. When this get's used in an actual website/blog or whatever and if there's any extra things in the readme needed, they should be added write at the bottom under the heading website specific. Does not apply to anyone viewing the public repo.
 
-Something worth noting about the gulpfile, I tested doing the task functions parallel and series and even with a lot of testing series was faster. I am changing it to parallel anyway as I feel that is how it should work. If you want to use the series version, have a look at a commit close to the start reguarding making gulp tasks parallel.
+ The next part of this readme will be split into two sections. The first section will be how to use and modify the boilerplate and the second section will be a set of standards and requirements that you may not need to follow depending on the kind of projects but will help you in keeping all the code standard and clean.
 
-## Features
-### Twig
+ ## Part 1
 
-In this section I will briefly describe how twig templating works to save any future confusion. The main directory for all our files is the app folder and the main folder for all the templates and pages is, you guessed it, the templates folder. To create a page you have to create a new html file (with the name you want it to be packaged as) in the pages folder. Each page will have a set of information you will have to define at the top, this may change depending on the specific website so it would be recomended that you copy another page file instead of creating it from scratch. I should probably eventually create a gulp task that creates a new html page. If you want to recreate some content over multiple pages for example a header, footer, etc.. you have to create an "include" html file. To me this is called a partial but whatever. To actually call one of these includes in code you need to use the twig syntax. An example of this is below:
+ To run this build you need npm,node and the gulp cli
 
-``` 
-{% include "../includes/someinclude.html" %}
+ My current versions are:
+
+ ```
+    node: v12.18.3 //https://nodejs.org/en/
+    npm: 6.14.7 //Installed with node
+    Gulp: 2.2.0 //https://gulpjs.com/docs/en/getting-started/quick-start
+ ```
+
+Once you have the above installed you need to install all the dependencies for this project. In the root of the folder use this command
 ```
-If you want to set some data to re-use throughout a file you can set variables, I mentioned this briefly. The code for this is below (You can also search for the {% to see what else uses it):
-```
-{% set data = "Some Dynamic Data" %}
-```
-To then actually use this data you go in a page (or layout file!) use use this syntax:
-```
-{{ data }}
+    npm i
 ```
 
-### SCSS, Bootstrap & postCSS
+When that has finished you should be ready to start running the dev server and build the starting files. Here's all the gulp commands below (should be run in the root folder where you installed dependencies):
+```
+    //Run the dev server
+    gulp
+    gulp dev
+
+    //Build the files
+    gulp build
+
+    //Delete the .tmp and dist folder
+    gulp clean
+```
+
+### Creating new assets
+
+If you want to create a new page you have to make a new html file in the directory: C:\Users\Cameron\Desktop\blog-boilerplate\app\templates\pages
+To get a good grasp of how it works look at one of the pages already there. But essentially, there is 3 pieces of twig code that you need to add. At the top of the file you need to add this
+```
+    {% extends "../layouts/default.html"%}
+```
+This is what determines which layout your page will use. I will explain how to create a layout after. The next two pieces you need to add are
+```
+    {% block content %}
+
+        // HTML code here
+
+    {% endblock %}
+```
+As you can probably tell in this code snippet all the html code you want for that page should be put within these twig block content tags. Now that you have a html page with these three things and you're page content you should be able to run the dev server and then navigate to your page through the URL (or build to create the static file).
+
+Now if you want to create a layout, which is the html content around your page for (example the body and header tags), you have to create a html file in this directory: 
+C:\Users\Cameron\Desktop\blog-boilerplate\app\templates\layouts
+Whatever name you make the html file is the name the page will look for in the twig extends template string. To see an example of a layout look at my default one. If you look at that file you may also notice I use another set of twig template strings. They will be explained below
+```
+    //This is where the content from the page will be inserted. Would typically be in the body
+    {% block content %}{% endblock %}
+
+    //These are twig variables that get replaced with whatever it is set to in the page. Have a look below to see how
+    {{ pageName }}
+    {{ title }}
+
+    {% set pageName = "index" %} // this is how you set the variable, this is done at the top of the page file
 
 
+    //This is how you include a partial (in twig they're called includes). You would replace "header" with whatever your partial html file name is. A partial is just a snippet of html code you want to re-use over multiple places/pages/layouts.
+    {% include "../includes/header.html" %}
+```
+
+### Other assets
+
+If you want to add images you can add per page images in the imgs>pages folder and any golbal images in the one above. If you want to add fonts just add them put them straight in the fonts folder but you can add a pages folder if you want. These will be moved for the dev and build tasks.
+
+### Javascript
+
+As for the javascript the way I have it setup right now is I have a variable at the top of the page with the pagename and I use that to define the script tags src. There is also a main js which is attached to everything in the layout. The javascript is transpiled and bundles per file and then put at the same level. This is so that I can do it in the same task. I recomend if you want to import any libraries do it where you need, if one page needs a certain library install the dependency via npm and import it there. If you want to use any of bootstraps javascript features you need to import jqery. I would do this in main.
 
 
-## Site Specific
+## Part 2 (coming soon...)

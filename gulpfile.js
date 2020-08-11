@@ -146,7 +146,6 @@ const serveTask = () => {
 exports.default = gulp.series(cleanDIST,gulp.parallel(templatesTask,gulp.series(scssTask,cssTask),jsConvert,moveFontsTask,moveImgsTask),cleanTMP,serveTask) //Dupe of dev
 
 exports.dev = gulp.series(cleanDIST,gulp.parallel(templatesTask,gulp.series(scssTask,cssTask),jsConvert,moveFontsTask,moveImgsTask),cleanTMP,serveTask)
-exports.clean = cleanTMP
-exports.js = jsConvert
+exports.clean = gulp.parallel(cleanTMP,cleanDIST)
 
 exports.build = gulp.series(cleanDIST,gulp.parallel(templatesTask,gulp.series(scssTask,cssTask),jsConvert,moveFontsTask,moveImgsTask),cleanTMP)
